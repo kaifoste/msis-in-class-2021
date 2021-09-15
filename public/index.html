@@ -53,6 +53,10 @@
             <ul>
                 <li v-for="row in offers">{{ row.name }} {{ row.salary }} | {{ row.bonus }}</li>
             </ul>
+            <p>{{ message }}</p>
+            <p>{{ result }}</p>
+            <p>{{ result.name }}</p>
+            <p><a v-bind:href="'mailto:' + result.email">{{ result.email }}</a></p>
                      
           </div>
         </div>
