@@ -1,11 +1,11 @@
-
 const SomeApp = {
     data() {
       return {
         students: [],
         selectedStudent: null,
         offers: [],
-        offerForm: {}
+        offerForm: {},
+        selectedOffer: null
       }
     },
     computed: {},
@@ -52,10 +52,17 @@ const SomeApp = {
                 console.error(error);
             });
         },
+        postOffer(evt) {
+          if (this.selectedOffer === null) {
+              this.postNewOffer(evt);
+          } else {
+              this.postEditOffer(evt);
+          }
+        },
         postNewOffer(evt) {
-          this.offerForm.studentId = this.selectedStudent.id;        
-          console.log("Posting:", this.offerForm);
-          // alert("Posting!");
+          this.offerForm.studentId = this.selectedStudent.id;
+  
+          console.log("Creating!", this.offerForm);
   
           fetch('api/offer/create.php', {
               method:'POST',
@@ -69,10 +76,41 @@ const SomeApp = {
               console.log("Returned from post:", json);
               // TODO: test a result was returned!
               this.offers = json;
-              
+  
               // reset the form
-              this.offerForm = {};
+              this.resetOfferForm();
             });
+        },
+        postEditOffer(evt) {
+          this.offerForm.studentId = this.selectedStudent.id;
+          this.offerForm.id = this.selectedOffer.id;
+  
+          console.log("Updating!", this.offerForm);
+  
+          fetch('api/offer/update.php', {
+              method:'POST',
+              body: JSON.stringify(this.offerForm),
+              headers: {
+                "Content-Type": "application/json; charset=utf-8"
+              }
+            })
+            .then( response => response.json() )
+            .then( json => {
+              console.log("Returned from post:", json);
+              // TODO: test a result was returned!
+              this.offers = json;
+  
+              // reset the form
+              this.resetOfferForm();
+            });
+        },
+        selectOfferToEdit(o) {
+            this.selectedOffer = o;
+            this.offerForm = Object.assign({}, this.selectedOffer);
+        },
+        resetOfferForm() {
+            this.selectedOffer = null;
+            this.offerForm = {};
         }
     },
     created() {
